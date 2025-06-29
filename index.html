@@ -2,33 +2,66 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ChatLite</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ChatLite - Login</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body data-theme="light">
-  <div class="chat-container">
-    <div class="chat-header">
-      ChatLite
-      <div>
-        <button onclick="clearChat()">🗑</button>
-        <button onclick="toggleTheme()">🌓</button>
-      </div>
+<body>
+  <div class="auth-container">
+    <h2>ChatLite</h2>
+
+    <input type="text" id="usernameInput" placeholder="Username" />
+    <input type="password" id="passwordInput" placeholder="Password" />
+
+    <div class="auth-buttons">
+      <button onclick="handleLogin()">Login</button>
+      <button onclick="handleRegister()">Register</button>
     </div>
-    <div class="chat-box" id="chatBox"></div>
-    <div class="chat-input">
-      <input type="text" id="chatInput" placeholder="Ketik pesan...">
-      <button onclick="sendMessage()">Kirim</button>
-    </div>
+
+    <p id="statusText" style="color: red; margin-top: 10px;"></p>
   </div>
 
-  <div class="username-modal" id="usernameModal">
-    <div>
-      <input type="text" id="usernameInput" placeholder="Masukkan username">
-      <button onclick="setUsername()">Masuk</button>
-    </div>
-  </div>
+  <script src="api.js"></script>
+  <script>
+    const usernameInput = document.getElementById('usernameInput');
+    const passwordInput = document.getElementById('passwordInput');
+    const statusText = document.getElementById('statusText');
 
-  <script src="app.js"></script>
+    async function handleLogin() {
+      const username = usernameInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!username || !password) {
+        statusText.textContent = 'Isi username dan password!';
+        return;
+      }
+
+      try {
+        await loginUser(username, password);
+        localStorage.setItem('username', username);
+        window.location.href = 'chat.html';
+      } catch (err) {
+        statusText.textContent = err.message;
+      }
+    }
+
+    async function handleRegister() {
+      const username = usernameInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!username || !password) {
+        statusText.textContent = 'Isi username dan password!';
+        return;
+      }
+
+      try {
+        await registerUser(username, password);
+        statusText.style.color = 'green';
+        statusText.textContent = 'Akun berhasil dibuat! Silakan login.';
+      } catch (err) {
+        statusText.textContent = 'Register gagal: ' + err.message;
+      }
+    }
+  </script>
 </body>
 </html>
