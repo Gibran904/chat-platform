@@ -2,58 +2,55 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ChatLite - Global Chat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ChatLite - Chat</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="chat-container">
-    <div class="chat-header">
-      <span>🌐 Global Chat</span>
+    <header>
+      <h2>ChatLite</h2>
       <button onclick="logout()">Logout</button>
+    </header>
+
+    <div class="messages" id="chatBox">
+      <!-- chat akan ditampilkan di sini -->
     </div>
-    
-    <div class="chat-box" id="chatBox">
-      <!-- chat akan tampil di sini -->
-    </div>
-    
+
     <div class="chat-input">
-      <input type="text" id="messageInput" placeholder="Ketik pesan..." />
+      <input type="text" id="chatInput" placeholder="Tulis pesan..." />
       <button onclick="sendMessage()">Kirim</button>
     </div>
   </div>
 
   <script src="api.js"></script>
   <script>
-    const username = localStorage.getItem('username');
     const chatBox = document.getElementById('chatBox');
-    const messageInput = document.getElementById('messageInput');
+    const chatInput = document.getElementById('chatInput');
+    const username = localStorage.getItem('username');
 
     if (!username) {
-      location.href = 'index.html'; // redirect kalau belum login
+      window.location.href = 'index.html';
+    }
+
+    async function loadChats() {
+      const messages = await getChats();
+      chatBox.innerHTML = '';
+      messages.forEach(msg => {
+        const div = document.createElement('div');
+        div.className = 'message';
+        div.innerHTML = <strong>${msg.user}:</strong> ${msg.text}<br><small>${msg.time}</small>;
+        chatBox.appendChild(div);
+      });
+      chatBox.scrollTop = chatBox.scrollHeight;
     }
 
     async function sendMessage() {
-      const text = messageInput.value.trim();
+      const text = chatInput.value.trim();
       if (!text) return;
-
       await postChat(username, text);
-      messageInput.value = '';
-      loadMessages(); // refresh langsung
-    }
-
-    async function loadMessages() {
-      const messages = await getChats();
-      chatBox.innerHTML = '';
-
-      messages.forEach(msg => {
-        const div = document.createElement('div');
-        div.className = 'chat-message' + (msg.user === username ? ' self' : '');
-        div.innerHTML = <strong>${msg.user}</strong>: ${msg.text}<br><small>${msg.time}</small>;
-        chatBox.appendChild(div);
-      });
-
-      chatBox.scrollTop = chatBox.scrollHeight;
+      chatInput.value = '';
+      await loadChats();
     }
 
     function logout() {
@@ -61,9 +58,9 @@
       location.href = 'index.html';
     }
 
-    // Auto-refresh tiap 3 detik
-    setInterval(loadMessages, 3000);
-    loadMessages();
+    // auto-load saat masuk
+    loadChats();
+    setInterval(loadChats, 3000); // refresh tiap 3 detik
   </script>
 </body>
 </html>
