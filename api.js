@@ -1,4 +1,4 @@
-const API_BASE = 'https://6860fe2b8e748640844491f8.mockapi.io';
+const API_BASE = 'https://6860fe2b8e748640844491f8.mockapi.io/chatlite';
 
 // 🚀 REGISTER USER
 async function registerUser(username, password) {
