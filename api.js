@@ -1,6 +1,5 @@
 const API_BASE = 'https://6860fe2b8e748640844491f8.mockapi.io/chatlite';
 
-// 🚀 REGISTER USER
 async function registerUser(username, password) {
   const res = await fetch(${API_BASE}/users, {
     method: 'POST',
@@ -8,11 +7,10 @@ async function registerUser(username, password) {
     body: JSON.stringify({ username, password })
   });
 
-  if (!res.ok) throw new Error('Register failed');
+  if (!res.ok) throw new Error('Register gagal');
   return res.json();
 }
 
-// ✅ LOGIN USER
 async function loginUser(username, password) {
   const res = await fetch(${API_BASE}/users);
   const users = await res.json();
@@ -21,14 +19,12 @@ async function loginUser(username, password) {
   return user;
 }
 
-// 💬 GET ALL CHATS
 async function getChats() {
   const res = await fetch(${API_BASE}/messages);
   const data = await res.json();
-  return data.sort((a, b) => new Date(a.time) - new Date(b.time)); // urut berdasarkan waktu
+  return data.sort((a, b) => new Date(a.time) - new Date(b.time));
 }
 
-// ✏ POST NEW CHAT
 async function postChat(user, text) {
   const res = await fetch(${API_BASE}/messages, {
     method: 'POST',
